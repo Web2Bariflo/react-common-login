@@ -13,7 +13,7 @@ const RegisterPage = () => {
     updatedItems[index].count += 1;
     setSelectItemsAndCounters(updatedItems);
   };
-
+// 
   const decrement = (index) => {
     const updatedItems = [...selectItemsAndCounters];
     if (updatedItems[index].count > 0) {
