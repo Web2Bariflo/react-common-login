@@ -14,7 +14,7 @@ const PageNotFound = () => {
             navigate('/');
         }
     };
-    const goBack=() => {
+    const goBack=() => {  
         navigate(-1)
     };
   return (

@@ -1,6 +1,6 @@
 import signupback from "./../../assets/image/Group.png";
 import farmer from "../../assets/image/Clippathgroup.png";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import FilledInput from "@mui/material/FilledInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -10,13 +10,13 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const Signup = () => {
   const [selectItemsAndCounters, setSelectItemsAndCounters] = useState([
-    { value: "", count: 0 },
+    { value: "", count: 1 },
     // Initialize with default values if needed
   ]);
 
-  const [noofponds, setNoOfPonds] = useState(0);
+  const [noofponds, setNoOfPonds] = useState(1);
   const [selectedValue, setSelectedValue] = useState("");
-  const[additionalinfo,setAdditionalinfo]=useState(false);
+  const [deviceinfo, setDeviceinfo] = useState(false);
   const increment = (index) => {
     const updatedItems = [...selectItemsAndCounters];
     updatedItems[index].count += 1;
@@ -25,12 +25,11 @@ const Signup = () => {
   //
   const decrement = (index) => {
     const updatedItems = [...selectItemsAndCounters];
-    if (updatedItems[index].count > 0) {
+    if (updatedItems[index].count > 1) {
       updatedItems[index].count -= 1;
     }
     setSelectItemsAndCounters(updatedItems);
   };
-
   const onRemove = (index) => {
     const updatedItems = selectItemsAndCounters.filter((_, i) => i !== index);
     setSelectItemsAndCounters(updatedItems);
@@ -39,7 +38,7 @@ const Signup = () => {
   const addSelectItem = () => {
     setSelectItemsAndCounters([
       ...selectItemsAndCounters,
-      { value: "", count: 0 },
+      { value: "", count: 1 },
     ]);
   };
 
@@ -52,7 +51,7 @@ const Signup = () => {
     setNoOfPonds(1 + noofponds);
   };
   const pondcountdec = () => {
-    if (noofponds > 0) {
+    if (noofponds > 1) {
       setNoOfPonds(noofponds - 1);
     }
   };
@@ -70,11 +69,11 @@ const Signup = () => {
   };
 
   //Regex expression
-  const firstNameRef = useRef();
-  const lastNameRef = useRef();
-  const phoneNumberRef = useRef();
-  const emailRef = useRef();
-  const aadhaarNumberRef = useRef();
+  const [firstNameRef, setfirstnameref] = useState("");
+  const [lastNameRef, setlastNameRef] = useState("");
+  const [phoneNumberRef, setphoneNumberRef] = useState("");
+  const [emailRef, emailemailRef] = useState("");
+  const [adhaarNumberRef, setadhaarNumberRef] = useState("");
   const [errors, setErrors] = useState({});
 
   const validateEmail = (email) => {
@@ -86,7 +85,7 @@ const Signup = () => {
     const phoneRegex = /^[6-9]\d{9}$/;
     return phoneRegex.test(phoneNumber);
   };
-  const validateAadhaar = (aadhaarNumber) => {
+  const validateAadhaar = (adhaarNumber) => {
     const d = [
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       [1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
@@ -114,7 +113,7 @@ const Signup = () => {
     const inv = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9];
 
     let c = 0;
-    let invertedArray = aadhaarNumber.split("").map(Number).reverse();
+    let invertedArray = adhaarNumber.split("").map(Number).reverse();
 
     for (let i = 0; i < invertedArray.length; i++) {
       c = d[c][p[i % 8][invertedArray[i]]];
@@ -127,9 +126,9 @@ const Signup = () => {
     e.preventDefault();
     const formErrors = {};
 
-    const email = emailRef.current.value;
-    const phoneNumber = phoneNumberRef.current.value;
-    const aadhaarNumber = aadhaarNumberRef.current.value;
+    const email = emailRef;
+    const phoneNumber = phoneNumberRef;
+    const adhaarNumber = adhaarNumberRef;
 
     if (!validateEmail(email)) {
       formErrors.email = "Invalid email address";
@@ -137,8 +136,8 @@ const Signup = () => {
     if (!validatePhoneNumber(phoneNumber)) {
       formErrors.phoneNumber = "Invalid phone number";
     }
-    if (!validateAadhaar(aadhaarNumber)) {
-      formErrors.aadhaarNumber = "Invalid Aadhaar number";
+    if (!validateAadhaar(adhaarNumber)) {
+      formErrors.adhaarNumber = "Invalid Aadhaar number";
     }
 
     setErrors(formErrors);
@@ -146,6 +145,7 @@ const Signup = () => {
     if (Object.keys(formErrors).length === 0) {
       // Form is valid, proceed with form submission
       console.log("Form submitted successfully");
+      setDeviceinfo(!deviceinfo);
     }
   };
 
@@ -164,130 +164,449 @@ const Signup = () => {
             height: "100vh",
           }}
         >
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
+          {deviceinfo ? (
             <div
               style={{
-                width: "30%",
-                height: "auto",
-                backgroundColor: "#E9EEF6",
-                padding: "5px",
-                zIndex: 10,
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                flexWrap: "wrap",
               }}
-
-              
             >
-              <h3 className="mb-5 mt-3 ml-3" style={{ color: "green" }}>
-                Registration
-              </h3>
-              <form onSubmit={handleSubmit}>
-                <div className="d-flex ml-3">
-                  <div className="form-floating mb-3">
-                    <input
-                      ref={firstNameRef}
-                      type="text"
-                      className="form-control"
-                      id="floatingInput"
-                      placeholder="FirstName"
-                      required
-                      onInvalid={(e) =>
-                        e.target.setCustomValidity("Please Enter First Name")
-                      }
-                      onChange={(e) => e.target.setCustomValidity("")}
-                    />
-                    <label htmlFor="floatingInput">First Name</label>
+              <div
+                style={{
+                  height: "auto",
+                  backgroundColor: "#E9EEF6",
+                  padding: "5px",
+                  zIndex: 10,
+                }}
+              >
+                <h3 className="mb-5 mt-3 ml-3" style={{ color: "green" }}>
+                  Registration
+                </h3>
+                <form onSubmit={handleSubmit}>
+                  <div className="d-flex ml-3">
+                    <div className="form-floating mb-3">
+                      <input
+                        value={firstNameRef}
+                        type="text"
+                        className="form-control"
+                        id="floatingInput"
+                        placeholder="FirstName"
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity("Please Enter First Name")
+                        }
+                        onChange={(e) => {
+                          setfirstnameref(e.target.value);
+                          e.target.setCustomValidity("");
+                        }}
+                      />
+                      <label htmlFor="floatingInput">First Name</label>
+                    </div>
+                    <div className="form-floating mb-3 ml-3">
+                      <input
+                        value={lastNameRef}
+                        type="text"
+                        className="form-control"
+                        id="floatingInput"
+                        placeholder="LastName"
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity("Please Enter Last Name")
+                        }
+                        onChange={(e) => {
+                          setlastNameRef(e.target.value);
+                          e.target.setCustomValidity("");
+                        }}
+                      />
+                      <label htmlFor="floatingInput">Last Name</label>
+                    </div>
+                  </div>
+                  <div className="d-flex">
+                    <div className="form-floating mb-3 ml-3">
+                      <input
+                        value={phoneNumberRef}
+                        type="number"
+                        className="form-control"
+                        id="floatingPassword"
+                        placeholder="Mobile Number"
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity(
+                            "Please Enter Mobile Number"
+                          )
+                        }
+                        onChange={(e) => {
+                          e.target.setCustomValidity("");
+                          setphoneNumberRef(e.target.value);
+                        }}
+                      />
+                      <label htmlFor="floatingPassword">Mobile Number</label>
+                      {errors.phoneNumber && (
+                        <p style={{ color: "red" }}>{errors.phoneNumber}</p>
+                      )}
+                    </div>
+                    <div className="form-floating mb-3 ml-3">
+                      <input
+                        value={emailRef}
+                        type="email"
+                        className="form-control"
+                        placeholder="Email-ID"
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity("Please Enter Email-ID")
+                        }
+                        onChange={(e) => {
+                          emailemailRef(e.target.value);
+                          e.target.setCustomValidity("");
+                        }}
+                      />
+                      <label htmlFor="floatingPassword">Email Id</label>
+                      {errors.email && (
+                        <p style={{ color: "red" }}>{errors.email}</p>
+                      )}
+                    </div>
                   </div>
                   <div className="form-floating mb-3 ml-3">
                     <input
-                      ref={lastNameRef}
-                      type="text"
+                      value={adhaarNumberRef}
+                      type="Text"
                       className="form-control"
-                      id="floatingInput"
-                      placeholder="LastName"
+                      placeholder="Adharnumber"
+                      style={{ width: "75%" }}
                       required
                       onInvalid={(e) =>
-                        e.target.setCustomValidity("Please Enter Last Name")
+                        e.target.setCustomValidity("Please Enter Adhar Number")
                       }
-                      onChange={(e) => e.target.setCustomValidity("")}
+                      onChange={(e) => {
+                        setadhaarNumberRef(e.target.value);
+                        e.target.setCustomValidity("");
+                      }}
                     />
-                    <label htmlFor="floatingInput">Last Name</label>
-                  </div>
-                </div>
-                <div className="d-flex">
-                  <div className="form-floating mb-3 ml-3">
-                    <input
-                      ref={phoneNumberRef}
-                      type="number"
-                      className="form-control"
-                      id="floatingPassword"
-                      placeholder="Mobile Number"
-                      required
-                      onInvalid={(e) =>
-                        e.target.setCustomValidity("Please Enter Mobile Number")
-                      }
-                      onChange={(e) => e.target.setCustomValidity("")}
-                    />
-                    <label htmlFor="floatingPassword">Mobile Number</label>
-                    {errors.phoneNumber && (
-                      <p style={{ color: "red" }}>{errors.phoneNumber}</p>
+                    <label htmlFor="floatingPassword">Adhar Number</label>
+                    {errors.adhaarNumber && (
+                      <p style={{ color: "red" }}>{errors.adhaarNumber}</p>
                     )}
                   </div>
-                  <div className="form-floating mb-3 ml-3">
-                    <input
-                      ref={emailRef}
-                      type="email"
-                      className="form-control"
-                      placeholder="Email-ID"
-                      required
-                      onInvalid={(e) =>
-                        e.target.setCustomValidity("Please Enter Email-ID")
-                      }
-                      onChange={(e) => e.target.setCustomValidity("")}
-                    />
-                    <label htmlFor="floatingPassword">Email Id</label>
-                    {errors.email && (
-                      <p style={{ color: "red" }}>{errors.email}</p>
-                    )}
+                  <div className="py-2 d-flex justify-content-end">
+                    <button
+                      type="submit"
+                      className="btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2"
+                    >
+                      Next
+                    </button>
                   </div>
-                </div>
-                <div className="form-floating mb-3 ml-3">
-                  <input
-                    ref={aadhaarNumberRef}
-                    type="Text"
-                    className="form-control"
-                    placeholder="Adharnumber"
-                    style={{ width: "75%" }}
-                    required
-                    onInvalid={(e) =>
-                      e.target.setCustomValidity("Please Enter Adhar Number")
-                    }
-                    onChange={(e) => e.target.setCustomValidity("")}
-                  />
-                  <label htmlFor="floatingPassword">Adhar Number</label>
-                  {errors.aadhaarNumber && (
-                    <p style={{ color: "red" }}>{errors.aadhaarNumber}</p>
-                  )}
-                </div>
-                <div className="py-2 d-flex justify-content-end">
+                </form>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                flexWrap: "wrap",
+                padding: "5px",
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "#e9eeff",
+
+                  height: "auto",
+                  padding: "5px",
+                  zIndex: 10,
+                }}
+              >
+                <h3 className="mb-5 ml-3" style={{ color: "#735cdb" }}>
+                  Additional Information
+                </h3>
+                <select
+                  class="form-select form-select-lg mb-3"
+                  aria-label="Large select example"
+                  value={selectedValue}
+                  onChange={handleSelectChange}
+                >
+                  <option value=" " selected>
+                    Select Your Device
+                  </option>
+                  <option value="Aqua">Aqua</option>
+                  <option value="Water Body">Water Body</option>
+
+                  <option value="3D Printing">3D Printing</option>
+                  <option value="Gis">Gis</option>
+                </select>
+                {/* START Aqua Form  */}
+                {selectedValue == "Aqua" && (
+                  <form>
+                    <div className="Aqua ml-3 mr-3">
+                      <div class="form-floating mb-3 ">
+                        <input
+                          type="Text"
+                          class="form-control"
+                          placeholder="Password"
+                          style={{ width: "55%" }}
+                          required
+                          onInvalid={(e) =>
+                            e.target.setCustomValidity(
+                              "Please Enter AccountName"
+                            )
+                          }
+                          onChange={(e) => {
+                            e.target.setCustomValidity("");
+                          }}
+                        />
+                        <label for="floatingPassword">Account Name</label>
+                      </div>
+
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th  className="text-center">Device Types</th>
+                            <th className="text-center">Device Quantity</th>
+                            <th  className="text-center" style={{ marginLeft: "200px" }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectItemsAndCounters.map((selectItem, i) => (
+                            <tr key={i}>
+                              <td className="margin-row">
+                                <select
+                                  class="form-select form-select-lg mb-3 "
+                                  aria-label="Large select example"
+                                  style={{ width: "200px" }}
+                                  required
+                                  onInvalid={(e) =>
+                                    e.target.setCustomValidity(
+                                      "Please Select Device"
+                                    )
+                                  }
+                                  onChange={(e) => {
+                                    e.target.setCustomValidity("");
+                                  }}
+                                >
+                                  <option value="" selected>
+                                    Open this select menu
+                                  </option>
+                                  <option value="Aeration">Aeration</option>
+                                </select>
+                              </td>
+                              <td>
+                                <div>
+                                  <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    onClick={() => decrement(i)}
+                                  >
+                                    -
+                                  </button>
+                                  <button
+                                    class="btn btn-info"
+                                    style={{ marginLeft: "10px" }}
+                                  >
+                                    {" "}
+                                    {selectItem.count}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    style={{ marginLeft: "10px" }}
+                                    onClick={() => increment(i)}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </td>
+                              <td>
+                                <button onClick={() => onRemove(i)}>
+                                  <i
+                                    type="button"
+                                    class="bi bi-trash"
+                                    style={{ color: "red", fontSize: 25 }}
+                                  ></i>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                          <tr>
+                            <td colSpan="3">
+                              <div>
+                                <button
+                                  type="button"
+                                  class="btn btn-warning"
+                                  onClick={addSelectItem}
+                                >
+                                  Add+
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="d-flex justify-content-end mt-2">
+                      <button
+                        type="submit"
+                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* END Aqua Form  */}
+
+                {/* START WaterBody Form  */}
+
+                {selectedValue == "Water Body" && (
+                  <form>
+                    <div className="waterbodyform">
+                      <div className="d-flex">
+                        <div class="form-floating mb-3 ml-3">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            placeholder="Pond Name"
+                            style={{ width: "85%" }}
+                            required
+                            onInvalid={(e) =>
+                              e.target.setCustomValidity("Pond Name ?")
+                            }
+                            onChange={(e) => {
+                              e.target.setCustomValidity("");
+                            }}
+                          />
+                          <label for="floatingInput">Pond Name</label>
+                        </div>
+
+                        <div class="form-floating mb-3 ml-3">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            placeholder="District Name"
+                            style={{ width: "85%" }}
+                            required
+                            onInvalid={(e) =>
+                              e.target.setCustomValidity("District name ?")
+                            }
+                            onChange={(e) => {
+                              e.target.setCustomValidity("");
+                            }}
+                          />
+                          <label for="floatingInput">District Name</label>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-between ml-3 mr-5">
+                        <div className=" ml-2  " style={{ fontSize: "20px" }}>
+                          No. Of Ponds
+                        </div>
+                        <div>
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onClick={pondcountdec}
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-info"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            {noofponds}
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            style={{ marginLeft: "10px" }}
+                            onClick={pondcountinc}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-end mt-2">
+                      <button
+                        type="submit"
+                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* END WaterBody Form  */}
+                {selectedValue == "3D Printing" && (
+                  <div className="d-flex justify-content-end mt-2">
+                    <button
+                      type="submit"
+                      className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
+                    >
+                      Register
+                    </button>
+                  </div>
+                )}
+
+                {selectedValue == "Gis" && (
+                  <>
+                    <FormControl sx={{ m: 1, width: "30ch" }} variant="filled">
+                      <InputLabel htmlFor="filled-adornment-password">
+                        Password
+                      </InputLabel>
+                      <FilledInput
+                        id="filled-adornment-password"
+                        type={showPassword ? "text" : "password"}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <div className="d-flex justify-content-end mt-2">
+                      <button
+                        type="submit"
+                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </>
+                )}
+                <div></div>
+                <div className="py-2 d-flex justify-content-between">
                   <button
-                    type="submit"
-                    className="btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2"
+                    className="btn btn-warning ml-3 px-3 py-2 text-center fs-sm fw-bold rounded-pill"
+                    onClick={() => {
+                      setDeviceinfo(!deviceinfo);
+                    }}
                   >
-                    Next
+                    {" "}
+                    Back{" "}
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
-
-          
+          )}
 
           <div
             className="d-flex"
