@@ -11,7 +11,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const Signup = () => {
   const [selectItemsAndCounters, setSelectItemsAndCounters] = useState([
     { value: "", count: 1 },
-    // Initialize with default values if needed
+   
   ]);
 
   const [noofponds, setNoOfPonds] = useState(1);
@@ -309,7 +309,7 @@ const Signup = () => {
                 justifyContent: "center",
                 alignContent: "center",
                 flexWrap: "wrap",
-                padding: "5px",
+               
               }}
             >
               <div
@@ -325,7 +325,7 @@ const Signup = () => {
                   Additional Information
                 </h3>
                 <select
-                  class="form-select form-select-lg mb-3"
+                  class="form-select form-select mb-3"
                   aria-label="Large select example"
                   value={selectedValue}
                   onChange={handleSelectChange}
@@ -347,7 +347,7 @@ const Signup = () => {
                         <input
                           type="Text"
                           class="form-control"
-                          placeholder="Password"
+                          placeholder="AccountName"
                           style={{ width: "55%" }}
                           required
                           onInvalid={(e) =>
@@ -358,7 +358,8 @@ const Signup = () => {
                           onChange={(e) => {
                             e.target.setCustomValidity("");
                           }}
-                        />
+                        />       
+                        
                         <label for="floatingPassword">Account Name</label>
                       </div>
 
@@ -375,7 +376,7 @@ const Signup = () => {
                             <tr key={i}>
                               <td className="margin-row">
                                 <select
-                                  class="form-select form-select-lg mb-3 "
+                                  class="form-select form-select"
                                   aria-label="Large select example"
                                   style={{ width: "200px" }}
                                   required
@@ -394,7 +395,7 @@ const Signup = () => {
                                   <option value="Aeration">Aeration</option>
                                 </select>
                               </td>
-                              <td>
+                              <td    className="text-center d-flex justify-content-center">
                                 <div>
                                   <button
                                     type="button"
