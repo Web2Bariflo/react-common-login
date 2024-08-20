@@ -1,0 +1,41 @@
+* model open */
+
+.check-modals {
+  background: rgba(0, 0, 0, 0.5) ;
+  position: fixed;
+ top: 0;
+ right:0;
+ left: 0;
+ bottom: 0;
+ z-index: 20;
+}
+
+.check-modal .model {
+  width: 951px;
+  margin: auto;
+  border-radius: 20px;
+  background: #fff;
+  margin-top: 11%;
+}
+
+
+.cancel-button-modal:hover{
+cursor: pointer;
+color: red;
+}
+
+/* model open */
+@media (max-width: 606px){
+
+  .check-modal .model{
+    width: 50% !important;
+    min-width: 285px;
+  }
+  img{
+    margin-left: 10% !important;
+  }
+  p{
+    margin-left: 10% !important;
+  }
+
+}

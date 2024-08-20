@@ -2,8 +2,9 @@ import React from "react";
 import Layout from "../layout/Layout";
 import logo from "./../../assets/image/logo.png";
 import { useForm } from "react-hook-form";
-import map from './../../assets/image/Frame.png'
-import { Link, useNavigate } from "react-router-dom";
+import map from "./../../assets/image/Frame.png";
+import { Link, useNavigate, redirect } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
   const {
@@ -13,7 +14,37 @@ const LoginPage = () => {
     reset,
   } = useForm();
 
-  const onSubmit = async (formdata) => {};
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.110:8001/log_in/",
+        data
+      );
+      console.log(response);
+      if (response.data.cat == "aqua") {
+        if (response.data.message === "Login Successful For aqua Admin") {
+          console.log("its a aqua admin ");
+          window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
+        } else {
+          console.log("its a user");
+          window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
+        }
+      } else if (response.data.cat == "water") {
+        if (response.data.message === "Login Successful For aqua Admin") {
+          console.log("its a water admin ");
+          //window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
+        } else {
+          console.log("its a water user");
+          // window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
+        }
+
+        console.log("its a Water user");
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
 
   return (
     <Layout title="common login Page">
@@ -56,25 +87,23 @@ const LoginPage = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Enter your phone number"
                     required
-                    {...register("mob", {
+                    {...register("username", {
                       required: true,
-                      maxLength: 12,
-                      minLength: 10,
                     })}
                   />
-                  {errors.mob && (
+                  {errors.username && (
                     <span className="text-sm font-light text-red-500">
                       Username required
                     </span>
                   )}
-                  {errors.mob && errors.mob.type === "maxLength" && (
+                  {errors.username && errors.username.type === "maxLength" && (
                     <span className="text-sm font-light text-red-500">
                       Max length should be 12
                     </span>
                   )}
-                  {errors.mob && errors.mob.type === "minLength" && (
+                  {errors.username && errors.username.type === "minLength" && (
                     <span className="text-sm font-light text-red-500">
-                      Min length should be 6
+                      Min length should be 10
                     </span>
                   )}
                 </div>
@@ -92,7 +121,7 @@ const LoginPage = () => {
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
-                    {...register("password", { required: true })} 
+                    {...register("password", { required: true })}
                   />
                   {errors.password && (
                     <span className="text-sm font-light text-red-500">
@@ -134,9 +163,12 @@ const LoginPage = () => {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{" "}
-                  <span className="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
-                    Register Here
-                  </span>
+                  <Link to="/signup">
+                    {" "}
+                    <span className="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
+                      Register Here
+                    </span>{" "}
+                  </Link>
                 </p>
               </form>
               <Link

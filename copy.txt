@@ -1,198 +1,84 @@
- <div
-              style={{
-              
-                backgroundColor: "#e9eeff",
-                width:'550px',
-                marginTop:'160px',
-              }}
-            >
-              <h3 className="mb-5 mt-3 ml-3" style={{color:'#735cdb'}}>Additional Information</h3>
-              <select
-                class="form-select form-select-lg mb-3 ml-3"
-                aria-label="Large select example"
-                style={{ width: "250px" }}  
-                value={selectedValue}
-                onChange={handleSelectChange}
-              >
-                <option value=" " selected>
-                  Select Your Device
-                </option>
-                <option value="Aqua">Aqua</option>
-                <option value="Water Body">Water Body</option>
+ {/* START WaterBody Form  */}
 
-                <option value="3D Printing">3D Printing</option>
-                <option value="Gis">Gis</option>
-              </select>
-              {/* START Aqua Form  */}
-              {selectedValue == "Aqua" && (
-                <div className="Aqua ml-3 mr-3">
-                  <div class="form-floating mb-3 ">
-                    <input
-                      type="Text"
-                      class="form-control"
-                      placeholder="Password"
-                      style={{ width: "250px" }}
-                    />
-                    <label for="floatingPassword">Account Name</label>
-                  </div>
+                {selectedValue == "Water Body" && (
+                  <form>
+                    <div className="waterbodyform">
+                      <div className="d-flex">
+                        <div class="form-floating mb-3 ml-3">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            placeholder="Pond Name"
+                            style={{ width: "85%" }}
+                            required
+                            onInvalid={(e) =>
+                              e.target.setCustomValidity("Pond Name ?")
+                            }
+                            onChange={(e) => {
+                              e.target.setCustomValidity("");
+                            }}
+                          />
+                          <label for="floatingInput">Pond Name</label>
+                        </div>
 
-                  <table class="table table-hover" >
-                    <thead>
-                      <tr>
-                        <th>Device Types</th>
-                        <th>Device Quantity</th>
-                        <th style={{ marginLeft: "200px" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectItemsAndCounters.map((selectItem, i) => (
-                        <tr key={i}>
-                          <td className="margin-row">
-                            <select
-                              class="form-select form-select-lg mb-3 "
-                              aria-label="Large select example"
-                              style={{ width: "200px" }}
-                            >
-                              <option selected>Open this select menu</option>
-                              <option value="Aeration">Aeration</option>
-                            </select>
-                          </td>
-                          <td>
-                            <div>
-                              <button
-                                class="btn btn-secondary"
-                                onClick={() => decrement(i)}
-                              >
-                                -
-                              </button>
-                              <button
-                                class="btn btn-info"
-                                style={{ marginLeft: "10px" }}
-                              >
-                                {" "}
-                                {selectItem.count}
-                              </button>
-                              <button
-                                class="btn btn-secondary"
-                                style={{ marginLeft: "10px" }}
-                                onClick={() => increment(i)}
-                              >
-                                +
-                              </button>
-                            </div>
-                          </td>
-                          <td>
-                            <button onClick={() => onRemove(i)}>
-                              <i
-                                class="bi bi-trash"
-                                style={{ color: "red", fontSize: 25 }}
-                              ></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      <tr>
-                        <td colSpan="3">
-                          <div>
-                            <button
-                              class="btn btn-warning"
-                              onClick={addSelectItem}
-                            >
-                              Add+
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* END Aqua Form  */}
-
-              {/* START WaterBody Form  */}
-
-              {selectedValue == "Water Body" && (
-                <div className="waterbodyform">
-                  <div className="d-flex">
-                    <div class="form-floating mb-3 ml-5">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="floatingInput"
-                        placeholder="Pond Name"
-                        style={{ width: "250px" }}
-                      />
-                      <label for="floatingInput">Pond Name</label>
+                        <div class="form-floating mb-3 ml-3">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            placeholder="District Name"
+                            style={{ width: "85%" }}
+                            required
+                            onInvalid={(e) =>
+                              e.target.setCustomValidity("District name ?")
+                            }
+                            onChange={(e) => {
+                              e.target.setCustomValidity("");
+                            }}
+                          />
+                          <label for="floatingInput">District Name</label>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-between ml-3 mr-5">
+                        <div className=" ml-2  " style={{ fontSize: "20px" }}>
+                          No. Of Ponds
+                        </div>
+                        <div>
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onClick={pondcountdec}
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-info"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            {noofponds}
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            style={{ marginLeft: "10px" }}
+                            onClick={pondcountinc}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
                     </div>
-
-                    <div class="form-floating mb-3 ml-5">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="floatingInput"
-                        placeholder="District Name"
-                        style={{ width: "250px" }}
-                      />
-                      <label for="floatingInput">District Name</label>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between ml-5 mr-5">
-                    <div className=" ml-2  " style={{ fontSize: "20px" }}>
-                      No. Of Ponds
-                    </div>
-                    <div>
-                      <button class="btn btn-secondary" onClick={pondcountdec}>
-                        -
-                      </button>
+                    <div className="d-flex justify-content-end mt-2">
                       <button
-                        class="btn btn-info"
-                        style={{ marginLeft: "10px" }}
+                        type="submit"
+                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
                       >
-                        {noofponds}
-                      </button>
-                      <button
-                        class="btn btn-secondary"
-                        style={{ marginLeft: "10px" }}
-                        onClick={pondcountinc}
-                      >
-                        +
+                        Register
                       </button>
                     </div>
-                  </div>
-                </div>
-              )}
+                  </form>
+                )}
 
-              {/* END WaterBody Form  */}
-
-              {selectedValue == "Gis" && (
-                <FormControl sx={{ m: 1, width: "30ch" }} variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">
-                    Password
-                  </InputLabel>
-                  <FilledInput
-                    id="filled-adornment-password"
-                    type={showPassword ? "text" : "password"}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              )}
-
-              <div className="py-2 d-flex justify-content-end">
-                <button className="btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 ">
-                  Register
-                </button>
-              </div>
-            </div>
-            
+                {/* END WaterBody Form  */}

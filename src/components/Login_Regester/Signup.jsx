@@ -1,6 +1,6 @@
 import signupback from "./../../assets/image/Group.png";
 import farmer from "../../assets/image/Clippathgroup.png";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import FilledInput from "@mui/material/FilledInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -8,62 +8,55 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import useFetch from "../../hooks/useFetch";
+import axios from "axios";
+import success from "./success.gif";
+import "./Signup.css";
 const Signup = () => {
-  const [selectItemsAndCounters, setSelectItemsAndCounters] = useState([
-    { value: "", count: 1 },
-   
-  ]);
+  const [aquadata, setAquadata] = useState({});
 
-  const [noofponds, setNoOfPonds] = useState(1);
-  const [selectedValue, setSelectedValue] = useState("");
-  const [deviceinfo, setDeviceinfo] = useState(false);
+  const accountnameref = useRef();
+  const gispassword = useRef();
+  const [registersuccess, setRegistersuccess] = useState(false);
+  const [usertype, setusertype] = useState("");
+  const [additionalinformation, setadditionalinformation] = useState(true);
+
+  const [aquaDeviceType, setaquaDeviceType] = useState([
+    { value: "", count: 1 },
+  ]);
   const increment = (index) => {
-    const updatedItems = [...selectItemsAndCounters];
+    const updatedItems = [...aquaDeviceType];
     updatedItems[index].count += 1;
-    setSelectItemsAndCounters(updatedItems);
+    setaquaDeviceType(updatedItems);
   };
-  //
   const decrement = (index) => {
-    const updatedItems = [...selectItemsAndCounters];
+    const updatedItems = [...aquaDeviceType];
     if (updatedItems[index].count > 1) {
       updatedItems[index].count -= 1;
     }
-    setSelectItemsAndCounters(updatedItems);
+    setaquaDeviceType(updatedItems);
   };
   const onRemove = (index) => {
-    const updatedItems = selectItemsAndCounters.filter((_, i) => i !== index);
-    setSelectItemsAndCounters(updatedItems);
+    const updatedItems = aquaDeviceType.filter((_, i) => i !== index);
+    setaquaDeviceType(updatedItems);
   };
-
   const addSelectItem = () => {
-    setSelectItemsAndCounters([
-      ...selectItemsAndCounters,
-      { value: "", count: 1 },
-    ]);
+    setaquaDeviceType([...aquaDeviceType, { value: "", count: 1 }]);
+  };
+  const aquahandleSelectChange = (index, event) => {
+    const updatedItems = [...aquaDeviceType];
+    updatedItems[index].value = event.target.value;
+    setaquaDeviceType(updatedItems);
   };
 
-  // const handleSelectChange = (index, event) => {
-  //   const updatedItems = [...selectItemsAndCounters];
-  //   updatedItems[index].value = event.target.value;
-  //   setSelectItemsAndCounters(updatedItems);
-  // };
-  const pondcountinc = () => {
-    setNoOfPonds(1 + noofponds);
-  };
-  const pondcountdec = () => {
-    if (noofponds > 1) {
-      setNoOfPonds(noofponds - 1);
-    }
-  };
   const handleSelectChange = (event) => {
-    setSelectedValue(event.target.value);
+    setusertype(event.target.value);
   };
-  const [showPassword, setShowPassword] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
@@ -109,9 +102,6 @@ const Signup = () => {
       [2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
       [7, 0, 4, 6, 9, 1, 3, 2, 5, 8],
     ];
-
-    const inv = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9];
-
     let c = 0;
     let invertedArray = adhaarNumber.split("").map(Number).reverse();
 
@@ -126,17 +116,26 @@ const Signup = () => {
     e.preventDefault();
     const formErrors = {};
 
-    const email = emailRef;
-    const phoneNumber = phoneNumberRef;
-    const adhaarNumber = adhaarNumberRef;
+    setAquadata({
+      firstname: firstNameRef,
+      lastname: lastNameRef,
+      email: emailRef,
+      mobno: phoneNumberRef,
+      adhaar: adhaarNumberRef,
+      user_cat: "aqua",
+      params: {
+        accountname: accountnameref.current?.value,
+        devicesList: aquaDeviceType,
+      },
+    });
 
-    if (!validateEmail(email)) {
+    if (!validateEmail(emailRef)) {
       formErrors.email = "Invalid email address";
     }
-    if (!validatePhoneNumber(phoneNumber)) {
+    if (!validatePhoneNumber(phoneNumberRef)) {
       formErrors.phoneNumber = "Invalid phone number";
     }
-    if (!validateAadhaar(adhaarNumber)) {
+    if (!validateAadhaar(adhaarNumberRef)) {
       formErrors.adhaarNumber = "Invalid Aadhaar number";
     }
 
@@ -145,9 +144,63 @@ const Signup = () => {
     if (Object.keys(formErrors).length === 0) {
       // Form is valid, proceed with form submission
       console.log("Form submitted successfully");
-      setDeviceinfo(!deviceinfo);
+      setadditionalinformation(!additionalinformation);
     }
   };
+
+  const aquaFormsubmit = async (e) => {
+    e.preventDefault();
+    console.log(aquaDeviceType);
+    console.log(aquadata);
+    try {
+      const response = await axios.post(
+        "http://192.168.0.108:8001/regd/",
+        aquadata
+      );
+
+      if (response) {
+        setRegistersuccess(!registersuccess);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const gisformsubmit = async (e) => {
+    e.preventDefault();
+    console.log(gispassword.current?.value);
+    const gisdata = {
+      name: firstNameRef + lastNameRef,
+      email: emailRef,
+      mob: phoneNumberRef,
+      user_category: "water",
+      password: gispassword.current?.value,
+    };
+    try {
+      const response = await axios.post("http://192.168.0.138:8000/signup/",gisdata);
+console.log(response);
+      if (response) {
+        setRegistersuccess(!registersuccess);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //api calls
+  const url1 = "http://192.168.0.108:8002/api/devicetype_view/";
+  // eslint-disable-next-line
+  const { response: response1, error: error1 } = useFetch(url1, "GET");
+
+  useEffect(() => {
+    setAquadata((prevAquadata) => ({
+      ...prevAquadata,
+      params: {
+        accountname: accountnameref.current?.value,
+        devicesList: aquaDeviceType,
+      },
+    }));
+  }, [aquaDeviceType]);
 
   return (
     <>
@@ -164,7 +217,7 @@ const Signup = () => {
             height: "100vh",
           }}
         >
-          {deviceinfo ? (
+          {additionalinformation ? (
             <div
               style={{
                 height: "100%",
@@ -172,6 +225,7 @@ const Signup = () => {
                 justifyContent: "center",
                 alignContent: "center",
                 flexWrap: "wrap",
+                padding:'8px'
               }}
             >
               <div
@@ -272,7 +326,7 @@ const Signup = () => {
                   <div className="form-floating mb-3 ml-3">
                     <input
                       value={adhaarNumberRef}
-                      type="Text"
+                      type="number"
                       className="form-control"
                       placeholder="Adharnumber"
                       style={{ width: "75%" }}
@@ -309,44 +363,48 @@ const Signup = () => {
                 justifyContent: "center",
                 alignContent: "center",
                 flexWrap: "wrap",
-               
+                padding:'8px'
               }}
             >
               <div
                 style={{
                   backgroundColor: "#e9eeff",
-
+                  overflow: "hidden",
                   height: "auto",
                   padding: "5px",
                   zIndex: 10,
+                  borderRadius: "8px",
                 }}
               >
                 <h3 className="mb-5 ml-3" style={{ color: "#735cdb" }}>
                   Additional Information
                 </h3>
                 <select
-                  class="form-select form-select mb-3"
+                  className="form-select form-select mb-3"
                   aria-label="Large select example"
-                  value={selectedValue}
+                  value={usertype}
                   onChange={handleSelectChange}
                 >
                   <option value=" " selected>
                     Select Your Device
                   </option>
                   <option value="Aqua">Aqua</option>
-                  <option value="Water Body">Water Body</option>
-
                   <option value="3D Printing">3D Printing</option>
-                  <option value="Gis">Gis</option>
+                  <option value="Water Body">Water Body</option>
                 </select>
                 {/* START Aqua Form  */}
-                {selectedValue == "Aqua" && (
-                  <form>
-                    <div className="Aqua ml-3 mr-3">
-                      <div class="form-floating mb-3 ">
+                {/*  eslint-disable-next-line */}
+                {usertype == "Aqua" && (
+                  <form onSubmit={aquaFormsubmit}>
+                    <div
+                      className="Aqua ml-3 mr-3"
+                      style={{ maxHeight: "363px", overflow: "auto" }}
+                    >
+                      <div className="form-floating mb-3 ">
                         <input
                           type="Text"
-                          class="form-control"
+                          className="form-control"
+                          ref={accountnameref}
                           placeholder="AccountName"
                           style={{ width: "55%" }}
                           required
@@ -358,95 +416,108 @@ const Signup = () => {
                           onChange={(e) => {
                             e.target.setCustomValidity("");
                           }}
-                        />       
-                        
-                        <label for="floatingPassword">Account Name</label>
-                      </div>
+                        />
 
-                      <table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th  className="text-center">Device Types</th>
-                            <th className="text-center">Device Quantity</th>
-                            <th  className="text-center" style={{ marginLeft: "200px" }}>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {selectItemsAndCounters.map((selectItem, i) => (
-                            <tr key={i}>
-                              <td className="margin-row">
-                                <select
-                                  class="form-select form-select"
-                                  aria-label="Large select example"
-                                  style={{ width: "200px" }}
-                                  required
-                                  onInvalid={(e) =>
-                                    e.target.setCustomValidity(
-                                      "Please Select Device"
-                                    )
-                                  }
-                                  onChange={(e) => {
-                                    e.target.setCustomValidity("");
-                                  }}
-                                >
-                                  <option value="" selected>
-                                    Open this select menu
-                                  </option>
-                                  <option value="Aeration">Aeration</option>
-                                </select>
-                              </td>
-                              <td    className="text-center d-flex justify-content-center">
+                        <label forName="floatingPassword">Account Name</label>
+                      </div>
+                      <div className="overflow-scroll">
+                        <table
+                          className="table-bordered table-striped table-hover table-design"
+                          style={{ width: "max-content", overflow: "auto" }}
+                        >
+                          <thead>
+                            <tr>
+                              <th className="text-center">Device Types</th>
+                              <th
+                                className="text-center"
+                                style={{ width: "163px" }}
+                              >
+                                Device Quantity
+                              </th>
+                              <th className="text-center">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {aquaDeviceType.map((selectItem, i) => (
+                              <tr key={i}>
+                                <td className="margin-row">
+                                  <select
+                                    className="form-select form-select"
+                                    aria-label="Large select example"
+                                    required
+                                    onInvalid={(e) =>
+                                      e.target.setCustomValidity(
+                                        "Please Select Device"
+                                      )
+                                    }
+                                    onChange={(e) => {
+                                      e.target.setCustomValidity("");
+                                      aquahandleSelectChange(i, e);
+                                    }}
+                                  >
+                                    <option value="" disabled selected>
+                                      Select your Device
+                                    </option>
+                                    {response1?.results.map((data, i) => (
+                                      <option key={i} value={data[0]}>
+                                        {data[0]}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td className="text-center d-flex justify-content-center">
+                                  <div>
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      onClick={() => decrement(i)}
+                                    >
+                                      -
+                                    </button>
+                                    <button
+                                      className="btn btn-info"
+                                      style={{ marginLeft: "10px" }}
+                                    >
+                                      {" "}
+                                      {selectItem.count}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      style={{ marginLeft: "10px" }}
+                                      onClick={() => increment(i)}
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                </td>
+                                <td>
+                                  <button onClick={() => onRemove(i)}>
+                                    <i
+                                      type="button"
+                                      className="bi bi-trash"
+                                      style={{ color: "red", fontSize: 25 }}
+                                    ></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                            <tr>
+                              <td colSpan="3">
                                 <div>
                                   <button
                                     type="button"
-                                    class="btn btn-secondary"
-                                    onClick={() => decrement(i)}
+                                    className="btn btn-warning"
+                                    onClick={addSelectItem}
                                   >
-                                    -
-                                  </button>
-                                  <button
-                                    class="btn btn-info"
-                                    style={{ marginLeft: "10px" }}
-                                  >
-                                    {" "}
-                                    {selectItem.count}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    class="btn btn-secondary"
-                                    style={{ marginLeft: "10px" }}
-                                    onClick={() => increment(i)}
-                                  >
-                                    +
+                                    Add+
                                   </button>
                                 </div>
                               </td>
-                              <td>
-                                <button onClick={() => onRemove(i)}>
-                                  <i
-                                    type="button"
-                                    class="bi bi-trash"
-                                    style={{ color: "red", fontSize: 25 }}
-                                  ></i>
-                                </button>
-                              </td>
                             </tr>
-                          ))}
-                          <tr>
-                            <td colSpan="3">
-                              <div>
-                                <button
-                                  type="button"
-                                  class="btn btn-warning"
-                                  onClick={addSelectItem}
-                                >
-                                  Add+
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-end mt-2">
                       <button
@@ -460,92 +531,8 @@ const Signup = () => {
                 )}
 
                 {/* END Aqua Form  */}
-
-                {/* START WaterBody Form  */}
-
-                {selectedValue == "Water Body" && (
-                  <form>
-                    <div className="waterbodyform">
-                      <div className="d-flex">
-                        <div class="form-floating mb-3 ml-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="floatingInput"
-                            placeholder="Pond Name"
-                            style={{ width: "85%" }}
-                            required
-                            onInvalid={(e) =>
-                              e.target.setCustomValidity("Pond Name ?")
-                            }
-                            onChange={(e) => {
-                              e.target.setCustomValidity("");
-                            }}
-                          />
-                          <label for="floatingInput">Pond Name</label>
-                        </div>
-
-                        <div class="form-floating mb-3 ml-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="floatingInput"
-                            placeholder="District Name"
-                            style={{ width: "85%" }}
-                            required
-                            onInvalid={(e) =>
-                              e.target.setCustomValidity("District name ?")
-                            }
-                            onChange={(e) => {
-                              e.target.setCustomValidity("");
-                            }}
-                          />
-                          <label for="floatingInput">District Name</label>
-                        </div>
-                      </div>
-                      <div className="d-flex justify-content-between ml-3 mr-5">
-                        <div className=" ml-2  " style={{ fontSize: "20px" }}>
-                          No. Of Ponds
-                        </div>
-                        <div>
-                          <button
-                            type="button"
-                            class="btn btn-secondary"
-                            onClick={pondcountdec}
-                          >
-                            -
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-info"
-                            style={{ marginLeft: "10px" }}
-                          >
-                            {noofponds}
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-secondary"
-                            style={{ marginLeft: "10px" }}
-                            onClick={pondcountinc}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="d-flex justify-content-end mt-2">
-                      <button
-                        type="submit"
-                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
-                      >
-                        Register
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* END WaterBody Form  */}
-                {selectedValue == "3D Printing" && (
+                {/* eslint-disable-next-line */}
+                {usertype == "3D Printing" && (
                   <div className="d-flex justify-content-end mt-2">
                     <button
                       type="submit"
@@ -556,8 +543,10 @@ const Signup = () => {
                   </div>
                 )}
 
-                {selectedValue == "Gis" && (
-                  <>
+                {/* Gis  */}
+                {/* eslint-disable-next-line */}
+                {usertype == "Water Body" && (
+                  <form onSubmit={gisformsubmit}>
                     <FormControl sx={{ m: 1, width: "30ch" }} variant="filled">
                       <InputLabel htmlFor="filled-adornment-password">
                         Password
@@ -565,6 +554,14 @@ const Signup = () => {
                       <FilledInput
                         id="filled-adornment-password"
                         type={showPassword ? "text" : "password"}
+                        inputRef={gispassword} // Correctly bind the ref
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity("Must Enter Your Password")
+                        }
+                        onChange={(e) => {
+                          e.target.setCustomValidity("");
+                        }}
                         endAdornment={
                           <InputAdornment position="end">
                             <IconButton
@@ -586,19 +583,19 @@ const Signup = () => {
                     <div className="d-flex justify-content-end mt-2">
                       <button
                         type="submit"
-                        className=" d-flex justify-content-end btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2 "
+                        className="btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2"
                       >
                         Register
                       </button>
                     </div>
-                  </>
+                  </form>
                 )}
                 <div></div>
                 <div className="py-2 d-flex justify-content-between">
                   <button
                     className="btn btn-warning ml-3 px-3 py-2 text-center fs-sm fw-bold rounded-pill"
                     onClick={() => {
-                      setDeviceinfo(!deviceinfo);
+                      setadditionalinformation(!additionalinformation);
                     }}
                   >
                     {" "}
@@ -621,6 +618,35 @@ const Signup = () => {
           </div>
         </div>
       </div>
+
+      {registersuccess ? (
+        <div
+          className="check-modal"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            buttom: 0,
+            zIndex: 20,
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <div
+            className="model"
+            style={{ fontSize: "16px", width: "600px", height: "300px" }}
+          >
+            <img
+              src={success}
+              alt="successful"
+              style={{ width: "200px", marginLeft: "30%" }}
+            />
+            <p style={{ marginLeft: "30%" }}>Your account Under Verification</p>
+            <p style={{ marginLeft: "30%" }}>Contact To Admin:-9777171033</p>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };
