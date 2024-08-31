@@ -16,7 +16,7 @@ const Signup = () => {
   const [aquadata, setAquadata] = useState({});
 
   const accountnameref = useRef();
-  const gispassword = useRef();
+  const password_aqua_farming = useRef();
   const [registersuccess, setRegistersuccess] = useState(false);
   const [usertype, setusertype] = useState("");
   const [additionalinformation, setadditionalinformation] = useState(true);
@@ -122,7 +122,7 @@ const Signup = () => {
       email: emailRef,
       mobno: phoneNumberRef,
       adhaar: adhaarNumberRef,
-      user_cat: "aqua",
+      user_cat: "analytics",
       params: {
         accountname: accountnameref.current?.value,
         devicesList: aquaDeviceType,
@@ -148,16 +148,16 @@ const Signup = () => {
     }
   };
 
-  const aquaFormsubmit = async (e) => {
+  const iotAdminDashboard = async (e) => {
     e.preventDefault();
     console.log(aquaDeviceType);
     console.log(aquadata);
     try {
       const response = await axios.post(
-        "http://192.168.0.108:8001/regd/",
+        "http://20.244.37.91:8001/regd/",
         aquadata
       );
-
+      console.log(response);
       if (response) {
         setRegistersuccess(!registersuccess);
       }
@@ -166,33 +166,67 @@ const Signup = () => {
     }
   };
 
-  const gisformsubmit = async (e) => {
+  const AquaFarmingFormSubmit = async (e) => {
     e.preventDefault();
-    console.log(gispassword.current?.value);
+
     const gisdata = {
-      name: firstNameRef + lastNameRef,
+      firstname: firstNameRef,
+      lastname: lastNameRef,
       email: emailRef,
-      mob: phoneNumberRef,
-      user_category: "water",
-      password: gispassword.current?.value,
+      adhaar: adhaarNumberRef,
+      mobno: phoneNumberRef,
+      user_cat: "aqua",
+      // password: password_aqua_farming.current?.value,
+      params: password_aqua_farming.current?.value,
     };
     try {
-      const response = await axios.post("http://192.168.0.138:8000/signup/",gisdata);
-console.log(response);
+      const response = await axios.post(
+        " https://waterbg.bc-pl.com/signup/",
+        gisdata
+      );
+      console.log(response);
       if (response) {
         setRegistersuccess(!registersuccess);
       }
     } catch (error) {
       throw error;
+    }
+  };
+
+  // WaterBody Rejevention
+
+  const waterBodyRejeventionSubmit = async (e) => {
+    e.preventDefault();
+    
+    const waterBodyData = {
+      firstname: firstNameRef,
+      lastname: lastNameRef,
+      email: emailRef,
+      mobno: phoneNumberRef,
+      adhaar: adhaarNumberRef,
+      user_cat: "water",
+      params: password_aqua_farming.current?.value,
+    };
+    try {
+      const response = await axios.post( 
+        "https://loginbg.bc-pl.com/regd/",
+        waterBodyData
+      );
+      console.log(response);
+      if (response) {
+        setRegistersuccess(!registersuccess);
+      }
+    } catch (error) {
+      console.error(error); 
     }
   };
 
   //api calls
-  const url1 = "http://192.168.0.108:8002/api/devicetype_view/";
+  const url1 = "http://192.168.1.31:8000/api/devicetype_view/";
   // eslint-disable-next-line
   const { response: response1, error: error1 } = useFetch(url1, "GET");
 
-  useEffect(() => {
+  useEffect(() => { 
     setAquadata((prevAquadata) => ({
       ...prevAquadata,
       params: {
@@ -225,7 +259,7 @@ console.log(response);
                 justifyContent: "center",
                 alignContent: "center",
                 flexWrap: "wrap",
-                padding:'8px'
+                padding: "8px",
               }}
             >
               <div
@@ -363,7 +397,7 @@ console.log(response);
                 justifyContent: "center",
                 alignContent: "center",
                 flexWrap: "wrap",
-                padding:'8px'
+                padding: "8px",
               }}
             >
               <div
@@ -386,18 +420,19 @@ console.log(response);
                   onChange={handleSelectChange}
                 >
                   <option value=" " selected>
-                    Select Your Device
+                    Select Type Of User
                   </option>
-                  <option value="Aqua">Aqua</option>
+                  <option value="aqua">Aqua Farming</option>
+                  <option value="analytics">Aqua Analytics</option>
+                  <option value="water">WaterBody</option>
                   <option value="3D Printing">3D Printing</option>
-                  <option value="Water Body">Water Body</option>
                 </select>
-                {/* START Aqua Form  */}
+                {/* START IOT ADMIN DASHBOARD Form  */}
                 {/*  eslint-disable-next-line */}
-                {usertype == "Aqua" && (
-                  <form onSubmit={aquaFormsubmit}>
+                {usertype == "analytics" && (
+                  <form onSubmit={iotAdminDashboard}>
                     <div
-                      className="Aqua ml-3 mr-3"
+                      className="analytics ml-3 mr-3"
                       style={{ maxHeight: "363px", overflow: "auto" }}
                     >
                       <div className="form-floating mb-3 ">
@@ -530,7 +565,9 @@ console.log(response);
                   </form>
                 )}
 
-                {/* END Aqua Form  */}
+                {/* END IOT ADMIN DASHBOARD Form  */}
+
+                {/* START 3D PRINTING DASHBOARD Form  */}
                 {/* eslint-disable-next-line */}
                 {usertype == "3D Printing" && (
                   <div className="d-flex justify-content-end mt-2">
@@ -543,10 +580,12 @@ console.log(response);
                   </div>
                 )}
 
-                {/* Gis  */}
+                {/* END 3D PRINTING DASHBOARD Form  */}
+
+                {/* START AQUA FARMING DASHBOARD Form  */}
                 {/* eslint-disable-next-line */}
-                {usertype == "Water Body" && (
-                  <form onSubmit={gisformsubmit}>
+                {usertype == "aqua" && (
+                  <form onSubmit={AquaFarmingFormSubmit}>
                     <FormControl sx={{ m: 1, width: "30ch" }} variant="filled">
                       <InputLabel htmlFor="filled-adornment-password">
                         Password
@@ -554,7 +593,7 @@ console.log(response);
                       <FilledInput
                         id="filled-adornment-password"
                         type={showPassword ? "text" : "password"}
-                        inputRef={gispassword} // Correctly bind the ref
+                        inputRef={password_aqua_farming} // Correctly bind the ref
                         required
                         onInvalid={(e) =>
                           e.target.setCustomValidity("Must Enter Your Password")
@@ -590,6 +629,58 @@ console.log(response);
                     </div>
                   </form>
                 )}
+                {/* END AQUA FARMING DASHBOARD Form  */}
+
+                {/* START WATERBODY DASHBOARD Form  */}
+
+                {usertype === "water" && (
+                  <form onSubmit={waterBodyRejeventionSubmit}>
+                    <FormControl sx={{ m: 1, width: "30ch" }} variant="filled">
+                      <InputLabel htmlFor="filled-adornment-password">
+                        Password
+                      </InputLabel>
+                      <FilledInput
+                        id="filled-adornment-password"
+                        type={showPassword ? "text" : "password"}
+                        inputRef={password_aqua_farming} // Correctly bind the ref
+                        required
+                        onInvalid={(e) =>
+                          e.target.setCustomValidity("Must Enter Your Password")
+                        }
+                        onChange={(e) => {
+                          e.target.setCustomValidity("");
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <div className="d-flex justify-content-end mt-2">
+                      <button
+                        type="submit"
+                        className="btn btn-success px-3 py-2 text-center fs-sm fw-bold rounded-pill mr-2"
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* END WATERBODY DASHBOARD Form  */}
+
                 <div></div>
                 <div className="py-2 d-flex justify-content-between">
                   <button

@@ -15,30 +15,35 @@ const LoginPage = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
+    try { 
       const response = await axios.post(
-        "http://192.168.0.110:8001/log_in/",
-        data
+        "https://loginbg.bc-pl.com/log_in/",
+        data 
       );
-      console.log(response);
-      if (response.data.cat == "aqua") {
+      console.log(data);
+      console.log( response.data);
+      console.log( response.data.mobno);
+      if (response.data.cat == "analytics") {
         if (response.data.message === "Login Successful For aqua Admin") {
-          console.log("its a aqua admin ");
           window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
         } else {
-          console.log("its a user");
           window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
-        }
-      } else if (response.data.cat == "water") {
-        if (response.data.message === "Login Successful For aqua Admin") {
-          console.log("its a water admin ");
-          //window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
-        } else {
-          console.log("its a water user");
-          // window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
-        }
+        } 
+      }
 
-        console.log("its a Water user");
+      if (response.data.cat == "aqua") {
+        if (response.data.message === "Login Successful For aqua User") {
+          window.location.href = `http://localhost:5174/userside/verify-token?category=aquaUser&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
+        } else {
+          window.location.href = `http://localhost:5174/adminside/?category=aquaUser&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
+        }
+      }
+      if (response.data.cat=="water") {
+        if (response.data.message === "Login Successful For water User") {
+          window.location.href = `http://localhost:5174/userside/verify-token?category=aquaUser&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
+        } else {
+          window.location.href = `http://localhost:5174/adminside/?category=aquaUser&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
+        } 
       }
     } catch (error) {
       console.log(error);
@@ -58,7 +63,7 @@ const LoginPage = () => {
           <div className="w-full bg-white rounded shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <div className="flex justify-center mb-0">
-                <img src={logo} alt="logo" />
+                <img src={logo} alt="logo" /> 
               </div>
               <h1 className="text-xl font-semibold leading-tight tracking-tight text-blue-900 md:text-2xl dark:text-white text-center mt-[0px]">
                 Log in
