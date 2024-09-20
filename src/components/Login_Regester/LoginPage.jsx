@@ -16,33 +16,47 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     try { 
+      // const response = await axios.post(
+      //   "https://loginbg.bc-pl.com/log_in/",
+      //   data 
+      // );
       const response = await axios.post(
-        "https://loginbg.bc-pl.com/log_in/",
+        `${process.env.REACT_APP_IP}log_in/`,
         data 
       );
       console.log(data);
       console.log( response.data);
       console.log( response.data.mobno);
       if (response.data.cat == "analytics") {
-        if (response.data.message === "Login Successful For aqua Admin") {
-          window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
-        } else {
-          window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
+        // if (response.data.message === "Login Successful For aqua Admin") {
+        //   window.location.href = `https://aqua.bc-pl.com/adminside/verify-token?category=aquaUser&token=${response.data.token}&mono=${response.data.mobno}`;
+        // } else {
+        //   window.location.href = `https://aqua.bc-pl.com/users/verify-token?category=aquaUser&token=${response.data.token}&mobno=${response.data.mobno}`;
+        // } 
+        if (response.data.message === "Login Successful For analytics Admin") {
+          window.location.href = `https://admin.bc-pl.com/adminside/verify-token?category=iot&token=${response.data.token}&mono=${response.data.mobno}`;
+        } else if (response.data.message === "Login Successful For analytics User"){
+          window.location.href = `https://admin.bc-pl.com/users/verify-token?category=iot&token=${response.data.token}&mobno=${response.data.mobno}`;
         } 
       }
 
       if (response.data.cat == "aqua") {
+        // if (response.data.message === "Login Successful For aqua User") {
+        //   window.location.href = `http://20.244.105.222/userside/verify-token?category=aquaFarming&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
+        // } else if(response.data.message === "Login Successful For aqua Admin"){
+        //   window.location.href = `http://20.244.105.222/adminside/?category=aquaFarming&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
+        // }
         if (response.data.message === "Login Successful For aqua User") {
-          window.location.href = `http://localhost:5174/userside/verify-token?category=aquaUser&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
-        } else {
-          window.location.href = `http://localhost:5174/adminside/?category=aquaUser&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
+          window.location.href = `https://aqua.bc-pl.com/userside/verify-token?category=aquaFarming&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
+        } else if(response.data.message === "Login Successful For aqua Admin"){
+          window.location.href = `https://aqua.bc-pl.com/adminside/?category=aquaFarming&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
         }
       }
       if (response.data.cat=="water") {
-        if (response.data.message === "Login Successful For water User") {
-          window.location.href = `http://localhost:5174/userside/verify-token?category=aquaUser&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
+        if (response.data.message === "Login Successful For waterbody User") {
+          window.location.href = `http://localhost:5174/userside/verify-token?category=waterUser&token=${response.data.token}&blf3k9bf=${response.data.mobno}`;
         } else {
-          window.location.href = `http://localhost:5174/adminside/?category=aquaUser&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
+          window.location.href = `http://localhost:5174/adminside/?category=waterUser&token=${response.data.token}&blf3k9bf=${response?.data.mobno}`;
         } 
       }
     } catch (error) {
@@ -176,12 +190,7 @@ const LoginPage = () => {
                   </Link>
                 </p>
               </form>
-              <Link
-                to="/change-language"
-                className="text-sm mt-0 text-gray-500"
-              >
-                Change Language
-              </Link>
+             
             </div>
           </div>
         </div>

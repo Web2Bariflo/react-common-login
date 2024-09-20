@@ -13,8 +13,7 @@ import axios from "axios";
 import success from "./success.gif";
 import "./Signup.css";
 const Signup = () => {
-  const [aquadata, setAquadata] = useState({});
-
+  const [aquaAnalyticsData, setaquaAnalyticsData] = useState({});
   const accountnameref = useRef();
   const password_aqua_farming = useRef();
   const [registersuccess, setRegistersuccess] = useState(false);
@@ -29,6 +28,8 @@ const Signup = () => {
     updatedItems[index].count += 1;
     setaquaDeviceType(updatedItems);
   };
+  console.log(process.env.REACT_APP_AquaIP);
+  
   const decrement = (index) => {
     const updatedItems = [...aquaDeviceType];
     if (updatedItems[index].count > 1) {
@@ -116,7 +117,7 @@ const Signup = () => {
     e.preventDefault();
     const formErrors = {};
 
-    setAquadata({
+    setaquaAnalyticsData({
       firstname: firstNameRef,
       lastname: lastNameRef,
       email: emailRef,
@@ -148,14 +149,14 @@ const Signup = () => {
     }
   };
 
-  const iotAdminDashboard = async (e) => {
+  const AquaAnalytics = async (e) => {
     e.preventDefault();
     console.log(aquaDeviceType);
-    console.log(aquadata);
+    console.log(aquaAnalyticsData);
     try {
       const response = await axios.post(
-        "http://20.244.37.91:8001/regd/",
-        aquadata
+        `${process.env.REACT_APP_IP}regd/`,
+        aquaAnalyticsData
       );
       console.log(response);
       if (response) {
@@ -169,7 +170,7 @@ const Signup = () => {
   const AquaFarmingFormSubmit = async (e) => {
     e.preventDefault();
 
-    const gisdata = {
+    const AquafarmingData = {
       firstname: firstNameRef,
       lastname: lastNameRef,
       email: emailRef,
@@ -180,9 +181,13 @@ const Signup = () => {
       params: password_aqua_farming.current?.value,
     };
     try {
+      // const response = await axios.post(
+      //   "http://20.244.37.91:8000/regd/",
+      //   AquafarmingData
+      // );
       const response = await axios.post(
-        " https://waterbg.bc-pl.com/signup/",
-        gisdata
+        `${process.env.REACT_APP_IP}regd/`,
+        AquafarmingData
       );
       console.log(response);
       if (response) {
@@ -208,8 +213,12 @@ const Signup = () => {
       params: password_aqua_farming.current?.value,
     };
     try {
+      // const response = await axios.post( 
+      //   "https://loginbg.bc-pl.com/regd/",
+      //   waterBodyData
+      // );
       const response = await axios.post( 
-        "https://loginbg.bc-pl.com/regd/",
+        `${process.env.REACT_APP_IP}regd/`,
         waterBodyData
       );
       console.log(response);
@@ -222,12 +231,12 @@ const Signup = () => {
   };
 
   //api calls
-  const url1 = "http://192.168.1.31:8000/api/devicetype_view/";
+  const url1 = `${process.env.REACT_APP_AquaIP}devicetype_view/`;
   // eslint-disable-next-line
   const { response: response1, error: error1 } = useFetch(url1, "GET");
 
   useEffect(() => { 
-    setAquadata((prevAquadata) => ({
+    setaquaAnalyticsData((prevAquadata) => ({
       ...prevAquadata,
       params: {
         accountname: accountnameref.current?.value,
@@ -430,7 +439,7 @@ const Signup = () => {
                 {/* START IOT ADMIN DASHBOARD Form  */}
                 {/*  eslint-disable-next-line */}
                 {usertype == "analytics" && (
-                  <form onSubmit={iotAdminDashboard}>
+                  <form onSubmit={AquaAnalytics}>
                     <div
                       className="analytics ml-3 mr-3"
                       style={{ maxHeight: "363px", overflow: "auto" }}
