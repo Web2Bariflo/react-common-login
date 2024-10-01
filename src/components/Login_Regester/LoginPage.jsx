@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../layout/Layout";
 import logo from "./../../assets/image/logo.png";
 import { useForm } from "react-hook-form";
@@ -7,12 +7,15 @@ import { Link, useNavigate, redirect } from "react-router-dom";
 import axios from "axios";
 
 const LoginPage = () => {
+  const [responseMessage,setResponseMessage]=useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
+
+
 
   const onSubmit = async (data) => {
     try { 
@@ -24,8 +27,10 @@ const LoginPage = () => {
         `${process.env.REACT_APP_IP}log_in/`,
         data 
       );
-      console.log(data);
-      console.log( response.data);
+      console.log(response.data.message)
+      setResponseMessage(response.data.error);
+      // console.log(data);
+      console.log( response);
       console.log( response.data.mobno);
       if (response.data.cat == "analytics") {
         // if (response.data.message === "Login Successful For aqua Admin") {
@@ -88,6 +93,12 @@ const LoginPage = () => {
               >
                 Common Login
               </p>
+
+              {responseMessage && (
+                <div className="text-center text-sm font-medium text-red-500 mb-4">
+                  {responseMessage}
+                </div>
+              )}
               <form
                 className="space-y-4 md:space-y-6"
                 onSubmit={handleSubmit(onSubmit)}
